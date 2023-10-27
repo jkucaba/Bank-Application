@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 public class ViewFactory {
     //Client Views
     private AnchorPane dashboardView;
+    private AnchorPane transactionsView;
     public ViewFactory(){}
     public AnchorPane getDashboardView(){
         if(dashboardView == null){
@@ -43,6 +44,18 @@ public class ViewFactory {
         stage.setTitle("Maze Bank");
         stage.show();
     }
+
+    public AnchorPane getTransactionsView() {
+        if(transactionsView == null){
+            try {
+                transactionsView = new FXMLLoader(getClass().getResource("/fxml/client/transactions.fxml")).load();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return  transactionsView;
+    }
+
     public void closeStage(Stage stage){
         stage.close();
     }
