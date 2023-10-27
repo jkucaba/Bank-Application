@@ -1,5 +1,6 @@
 package com.jakubku.mazebank.mazebank.views;
 
+import com.jakubku.mazebank.mazebank.controllers.admin.AdminController;
 import com.jakubku.mazebank.mazebank.controllers.client.ClientController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -14,12 +15,21 @@ public class ViewFactory {
     private AnchorPane dashboardView;
     private AnchorPane transactionsView;
     private AnchorPane accountsView;
+
+    //Admin Views
+    private final StringProperty adminSelectedMenuItem;
+    private AnchorPane createClientView;
+
     public ViewFactory(){
         this.clientSelectedMenuItem = new SimpleStringProperty();
+        this.adminSelectedMenuItem = new SimpleStringProperty();
     }
     /*
     * Client Views Section
     * */
+    public StringProperty getAdminSelectedMenuItem(){
+        return adminSelectedMenuItem;
+    }
     public StringProperty getClientSelectedMenuItem() {
         return clientSelectedMenuItem;
     }
@@ -34,10 +44,6 @@ public class ViewFactory {
         }
         return dashboardView;
     }
-    public void showLoginWindow(){
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
-        createStage(loader);
-    }
 
     public void showClientWindow(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/client/client.fxml"));
@@ -45,19 +51,6 @@ public class ViewFactory {
         loader.setController(clientController);
         createStage(loader);
     }
-    private void createStage(FXMLLoader loader){
-        Scene scene = null;
-        try {
-            scene = new Scene(loader.load());
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Maze Bank");
-        stage.show();
-    }
-
     public AnchorPane getTransactionsView() {
         if(transactionsView == null){
             try {
@@ -78,6 +71,43 @@ public class ViewFactory {
             }
         }
         return accountsView;
+    }
+    /*
+    * Admin Views Section
+    * */
+
+    public AnchorPane getCreateClientView() {
+        if(createClientView == null){
+            try {
+                createClientView = new FXMLLoader(getClass().getResource("/fxml/admin/createClient.fxml")).load();
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        return createClientView;
+    }
+
+    public void showAdminWindow(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin/admin.fxml"));
+        AdminController adminController = new AdminController();
+        loader.setController(adminController);
+        createStage(loader);
+    }
+    public void showLoginWindow(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+        createStage(loader);
+    }
+    private void createStage(FXMLLoader loader){
+        Scene scene = null;
+        try {
+            scene = new Scene(loader.load());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("Maze Bank");
+        stage.show();
     }
 
     public void closeStage(Stage stage){
