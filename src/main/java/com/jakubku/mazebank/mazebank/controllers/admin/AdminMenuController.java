@@ -4,6 +4,7 @@ import com.jakubku.mazebank.mazebank.models.Model;
 import com.jakubku.mazebank.mazebank.views.AdminMenuOptions;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,6 +23,7 @@ public class AdminMenuController implements Initializable {
         create_client_btn.setOnAction(e -> onCreateClient());
         clients_btn.setOnAction(e -> onCLients());
         deposit_btn.setOnAction(e -> onDeposit());
+        logout_btn.setOnAction(e -> onLogout());
     }
     private void onCreateClient(){
         Model.getInstance().getViewFactory().getAdminSelectedMenuItem().set(AdminMenuOptions.CREATE_CLIENT);
@@ -31,5 +33,15 @@ public class AdminMenuController implements Initializable {
     }
     private void onDeposit(){
         Model.getInstance().getViewFactory().getAdminSelectedMenuItem().set(AdminMenuOptions.DEPOSIT);
+    }
+    private void onLogout(){
+        // Get Stage
+        Stage stage = (Stage) clients_btn.getScene().getWindow();
+        // Close the Admin Window
+        Model.getInstance().getViewFactory().closeStage(stage);
+        // Show Login Window
+        Model.getInstance().getViewFactory().showLoginWindow();
+        // Set Client Login Success Flag to false
+        Model.getInstance().setAdminLoginSuccessFlag(false);
     }
 }
