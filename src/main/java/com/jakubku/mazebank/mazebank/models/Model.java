@@ -10,19 +10,19 @@ public class Model {
     private static Model model;
     private final ViewFactory viewFactory;
     private final DatabaseDriver databaseDriver;
-    private AccountType loginAccountType = AccountType.CLIENT;
     //Client Data Section
     private final Client client;
     private boolean clientLoginSuccessFlag;
     //Admin Data Section
+    private boolean adminLoginSuccessFlag;
     private Model(){
         this.viewFactory = new ViewFactory();
         this.databaseDriver = new DatabaseDriver();
         //Client Data Section
         this.clientLoginSuccessFlag = false;
         this.client = new Client("", "", "", null, null, null);
-
         //Admin Data Section
+        this.adminLoginSuccessFlag = false;
     }
     public static synchronized Model getInstance(){
         if(model == null){
@@ -37,15 +37,6 @@ public class Model {
     public  DatabaseDriver getDatabaseDriver() {
         return databaseDriver;
     }
-
-    public AccountType getLoginAccountType() {
-        return loginAccountType;
-    }
-
-    public void setLoginAccountType(AccountType loginAccountType) {
-        this.loginAccountType = loginAccountType;
-    }
-
     /*
     * Client Method Section
     * */
@@ -76,5 +67,24 @@ public class Model {
             e.printStackTrace();
         }
     }
+    /*
+    * Admin Method Section
+    * */
+    public  boolean getAdminLoginSuccessFlag() {
+        return this.adminLoginSuccessFlag;
+    }
 
+    public void setAdminLoginSuccessFlag(boolean adminLoginSuccessFlag) {
+        this.adminLoginSuccessFlag = adminLoginSuccessFlag;
+    }
+    public void evaluateAdminCredentials(String username, String password){
+        ResultSet resultSet = databaseDriver.getAdminData(username, password);
+        try{
+            if(resultSet.isBeforeFirst()){
+                this.adminLoginSuccessFlag = true;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
