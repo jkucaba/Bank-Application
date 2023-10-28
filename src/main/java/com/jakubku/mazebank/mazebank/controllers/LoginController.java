@@ -23,10 +23,7 @@ public class LoginController implements Initializable {
         acc_selector.setItems(FXCollections.observableArrayList(AccountType.CLIENT, AccountType.ADMIN)); //Dodajemy iopcje wyboru client/admin
         acc_selector.setValue(Model.getInstance().getViewFactory().getLoginAccountType()); // usttawiamy początkową wartość na client
         acc_selector.valueProperty().
-                addListener(observable ->
-                        Model.getInstance()
-                                .getViewFactory()
-                                .setLoginAccountType(acc_selector.getValue())); // sprawdzamy co wybrał użytkownik i zmieniamy wartość selected Acc type
+                addListener(observable -> setAcc_selector()); // sprawdzamy co wybrał użytkownik i zmieniamy wartość selected Acc type
         login_btn.setOnAction(event -> onLogin());
     }
     private void onLogin(){
@@ -45,7 +42,25 @@ public class LoginController implements Initializable {
             }
 
         } else { //jak admin to dajemy widok admina
-            Model.getInstance().getViewFactory().showAdminWindow();
+            // Evaluate Admin Credentials
+            Model.getInstance().evaluateAdminCredentials(payee_address_fld.getText(), password_fld.getText());
+            if(Model.getInstance().getAdminLoginSuccessFlag()){
+                Model.getInstance().getViewFactory().showAdminWindow();
+                //Close the Login Stage
+                Model.getInstance().getViewFactory().closeStage(stage);
+            } else {
+                payee_address_fld.setText("");
+                password_fld.setText("");
+                error_lbl.setText("No Such Login Credentials");
+            }
+        }
+    }
+    private void setAcc_selector(){
+        Model.getInstance().getViewFactory().setLoginAccountType(acc_selector.getValue());
+        if(acc_selector.getValue() == AccountType.ADMIN){
+            payee_address_label.setText("Username:");
+        } else {
+            payee_address_label.setText("Payee Address:");
         }
     }
 }
