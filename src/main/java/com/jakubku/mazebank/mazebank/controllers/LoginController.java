@@ -4,10 +4,7 @@ import com.jakubku.mazebank.mazebank.models.Model;
 import com.jakubku.mazebank.mazebank.views.AccountType;
 import javafx.collections.FXCollections;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -17,7 +14,7 @@ public class LoginController implements Initializable {
     public ChoiceBox<AccountType> acc_selector;
     public Label payee_address_label;
     public TextField payee_address_fld;
-    public TextField password_fld;
+    public PasswordField password_fld;
     public Button login_btn;
     public Label error_lbl;
 
@@ -34,9 +31,19 @@ public class LoginController implements Initializable {
     }
     private void onLogin(){
         Stage stage = (Stage) error_lbl.getScene().getWindow();
-        Model.getInstance().getViewFactory().closeStage(stage);
         if(Model.getInstance().getViewFactory().getLoginAccountType() == AccountType.CLIENT){ //jeśli client to wybieramy klienta
-            Model.getInstance().getViewFactory().showClientWindow();
+            // Evaluate Client Login Credentials
+            Model.getInstance().evaluateClientCred(payee_address_fld.getText(), password_fld.getText());
+            if(Model.getInstance().getClientLoginSuccessFlag()){
+                Model.getInstance().getViewFactory().showClientWindow();
+                // Close the Login Stage
+                Model.getInstance().getViewFactory().closeStage(stage);
+            } else {
+                payee_address_fld.setText("");
+                password_fld.setText("");
+                error_lbl.setText("No Such Login Credentials");
+            }
+
         } else { //jak admin to dajemy widok admina
             Model.getInstance().getViewFactory().showAdminWindow();
         }
