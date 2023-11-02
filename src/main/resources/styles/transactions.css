@@ -10,7 +10,7 @@
     -fx-background-color: #EEEEEE;
     -fx-padding: 10;
 }
-.transactions_container .list_cell {
+.transactions_container .list-cell {
     -fx-background-color: #EEEEEE;
     -fx-pref-width: 800;
 }

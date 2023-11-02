@@ -87,13 +87,13 @@
 /* Transactions View */
 .transaction_listView {
     -fx-background-color: #EEEEEE;
-    -fx-border-color: #AAAAAA;
     -fx-border-width: 0 0 0 0;
+    -fx-border-color: #AAAAAA;
 }
-.transaction_listView .scroll-bar: vertical {
+.transaction_listView .scroll-bar:vertical {
     -fx-scale-x: 0;
 }
-.list_cell {
+.list-cell {
     -fx-background-color: #EEEEEE;
     -fx-padding: 15 0 15 0;
 }
