@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
 import java.net.URL;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
@@ -33,6 +34,7 @@ public class DashboardController implements Initializable {
         initLatestTransactionsList();
         transaction_listview.setItems(Model.getInstance().getLatestTransactions());
         transaction_listview.setCellFactory(e -> new TransactionCellFactory());
+        send_money_btn.setOnAction(e -> onSendMoney());
     }
     private void bindData(){
         user_name.textProperty().bind(Bindings.concat("Hi, ").concat(Model.getInstance().getClient().firstNameProperty()));
@@ -46,5 +48,29 @@ public class DashboardController implements Initializable {
         if(Model.getInstance().getLatestTransactions().isEmpty()){
             Model.getInstance().setLatestTransactions();
         }
+    }
+    private void onSendMoney(){
+        String receiver = payee_fld.getText();
+        double amount = Double.parseDouble(amount_fld.getText());
+        String message = message_fld.getText();
+        String sender = Model.getInstance().getClient().payeeAddressProperty().get();
+        ResultSet resultSet = Model.getInstance().getDatabaseDriver().searchClient(receiver);
+        try {
+            if(resultSet.isBeforeFirst()){
+                Model.getInstance().getDatabaseDriver().updateBalance(receiver, amount, "ADD");
+            }
+        } catch(Exception e ){
+            e.printStackTrace();
+        }
+        // Subtract from sender's savings account
+        Model.getInstance().getDatabaseDriver().updateBalance(sender, amount, "SUBTRACT");
+        // Update savings account balance in clients object
+        Model.getInstance().getClient().savingsAccountProperty().get().setBalance(Model.getInstance().getDatabaseDriver().getSavingsAccountBalance(sender) - amount);
+        // Record new Transaction
+        Model.getInstance().getDatabaseDriver().newTransaction(sender,receiver,amount,message);
+        // Clear the fields
+        payee_fld.setText("");
+        amount_fld.setText("");
+        message_fld.setText("");
     }
 }
